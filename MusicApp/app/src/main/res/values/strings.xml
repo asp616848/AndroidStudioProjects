@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MusicApp</string>
+    <string name="heading">Services In App</string>
+    <string name="start">Start Serice</string>
+    <string name="stop">Stop Service</string>
+    <string name="stop_music">Stop Music</string>
+    <string name="start_music">Start Music</string>
+</resources>

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">StarBucks</string>
+    <string name="starbucks_logo">Starbucks logo</string>
+    <string-array name="options">
+        <item>Drinks</item>
+        <item>Foods</item>
+        <item>Stores</item>
+    </string-array>
+    <string-array name="menu">
+        <item>Espresso</item>
+        <item>Cappuccino</item>
+        <item>Latte</item>
+        <item>Macchiato</item>
+        <item>Mocha</item>
+    </string-array>
+</resources>
