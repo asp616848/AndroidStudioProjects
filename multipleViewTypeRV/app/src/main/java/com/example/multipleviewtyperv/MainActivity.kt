@@ -2,18 +2,8 @@ package com.example.multipleviewtyperv
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.multipleviewtyperv.ui.theme.MultipleViewTypeRVTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -30,11 +20,11 @@ class MainActivity : ComponentActivity() {
         itemsList.add(itemClass("Text one", 0))
         itemsList.add(itemClass("Text one", "Text two", androidx.core.R.drawable.notification_bg_low_pressed, 1))
         itemsList.add(itemClass("single", 0))
-        val RV = findViewById<RecyclerView>(R.id.RV) as RecyclerView
-        RV.layoutManager = LinearLayoutManager(this)
+        val recyclerView = findViewById<RecyclerView>(R.id.RV) as RecyclerView ?:throw NullPointerException("RecycleView Could not be found")
+        recyclerView.layoutManager = LinearLayoutManager(this)
         val adapter = adapterClass()
         adapter.itemsList = itemsList
-        RV.adapter = adapter
+        recyclerView.adapter = adapter
     }
 
 

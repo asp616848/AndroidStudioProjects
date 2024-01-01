@@ -5,18 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 
 class adapterClass: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     lateinit var itemsList: MutableList<itemClass>
     class ViewHolder_one(itemView :View) :RecyclerView.ViewHolder(itemView){
-        val text: TextView = itemView.findViewById(R.id.text_one)
+        val text: TextView = itemView.findViewById(R.id.text)
+        val linearLayout: LinearLayout = itemView.findViewById(R.id.linearlayout)
     }
     class ViewHolder_two(itemView :View) :RecyclerView.ViewHolder(itemView){
         val text_one: TextView = itemView.findViewById(R.id.text_one)
         val text_two: TextView = itemView.findViewById(R.id.text_two)
         val image: ImageView = itemView.findViewById(R.id.image)
+        val linearLayout: LinearLayout = itemView.findViewById(R.id.linearlayout)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when(viewType){
@@ -40,12 +44,18 @@ class adapterClass: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             0 -> {
                 val viewHolder_one = holder as ViewHolder_one
                 viewHolder_one.text.text = currentItem.text_one
+                viewHolder_one.linearLayout.setOnClickListener { view ->
+                    Toast.makeText(view.context,"first type clicked",Toast.LENGTH_SHORT).show()
+                }
             }
             1 -> {
                 val viewHolder_two = holder as ViewHolder_two
                 viewHolder_two.text_one.text = currentItem.text_one
                 viewHolder_two.text_two.text = currentItem.text_two
                 viewHolder_two.image.setImageResource(currentItem.image)
+                viewHolder_two.linearLayout.setOnClickListener { view ->
+                    Toast.makeText(view.context,"second type clicked",Toast.LENGTH_SHORT).show()
+                }
             }
             else -> {
                 throw IllegalArgumentException("Invalid view type")
