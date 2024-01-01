@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FirstFragment">
+
+    <TextView
+        android:id="@+id/text_one"
+        android:layout_width="311dp"
+        android:layout_height="144dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="250dp"
+        android:text="@string/text_one"
+        android:textSize="34sp"
+        android:textStyle="bold|italic" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="1000dp"
+        android:contentDescription="f"
+        android:src="@android:drawable/ic_dialog_map"
+        />
+
+</FrameLayout>

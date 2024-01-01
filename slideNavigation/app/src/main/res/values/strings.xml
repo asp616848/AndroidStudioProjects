@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">slideNavigation</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">This is the second fragment and home</string>
+    <string name="text_one">Kya scene hai?\n</string>
+    <string name="text_third">Hey this is a fidget switch</string>
+</resources>
