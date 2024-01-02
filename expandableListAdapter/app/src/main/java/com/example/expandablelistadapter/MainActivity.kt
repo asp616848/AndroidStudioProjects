@@ -1,9 +1,12 @@
 package com.example.expandablelistadapter
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ExpandableListAdapter
 import android.widget.ExpandableListView
 import android.widget.Spinner
@@ -76,6 +79,26 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         // Set the ArrayAdapter (ad) data on the
         // Spinner which binds data to spinner
         spin.adapter = ad
+        val editText = EditText(this)
+        val button = findViewById<Button>(R.id.button)
+        button.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Input Dialog")
+            builder.setMessage("Enter your message here")
+            builder.setCancelable(false)
+            builder.setView(editText)
+            builder.setPositiveButton("OK") { dialog, which ->
+                Toast.makeText(
+                    applicationContext,
+                    editText.text.toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+            val edittextDialog = builder.create()
+            edittextDialog.show()
+
+        }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?,
@@ -90,4 +113,19 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Are you SURE,You want to EXIT?")
+        builder.setTitle("ALERT!")
+        builder.setCancelable(true)
+        builder.setPositiveButton("Yes"){
+            dialog, which -> super.onBackPressed()
+        }
+        builder.setNegativeButton("No"){
+                dialog, which -> dialog.cancel()
+        }
+        val alertdialog = builder.create()
+        alertdialog.show()
+    }
+
 }
