@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled.enabled
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,8 +9,8 @@ plugins {
 android {
     namespace = "com.example.stopwatch"
     compileSdk = 34
-    buildFeatures {
-        dataBinding = true
+    viewBinding {
+        enabled = true
     }
 
 
