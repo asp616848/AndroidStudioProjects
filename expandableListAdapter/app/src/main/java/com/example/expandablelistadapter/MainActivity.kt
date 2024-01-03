@@ -1,15 +1,23 @@
 package com.example.expandablelistadapter
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.icu.text.DateFormat
+import android.icu.text.DecimalFormat
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.View
 import android.widget.AdapterView
+import android.widget.AnalogClock
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.DigitalClock
 import android.widget.EditText
 import android.widget.ExpandableListAdapter
 import android.widget.ExpandableListView
+import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,8 +30,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.expandablelistadapter.ui.theme.ExpandableListAdapterTheme
+import com.squareup.picasso.Picasso
+import java.text.NumberFormat
+import java.util.Calendar
 
-class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
+class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener{
 
     private lateinit var expandableListView: ExpandableListView
     private lateinit var expandableListAdapter: ExpandableListAdapter
@@ -32,7 +43,8 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
     var courses = arrayOf<String?>("C", "Data structures",
         "Interview prep", "Algorithms",
         "DSA with java", "OS")
-
+    lateinit var textView: TextView
+    lateinit var button2: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -69,16 +81,21 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         val ad: ArrayAdapter<*> = ArrayAdapter<Any?>(
             this,
             android.R.layout.simple_spinner_item,
-            courses)
+            courses
+        )
 
         // set simple layout resource file
         // for each item of spinner
         ad.setDropDownViewResource(
-            android.R.layout.simple_spinner_dropdown_item)
+            android.R.layout.simple_spinner_dropdown_item
+        )
 
         // Set the ArrayAdapter (ad) data on the
         // Spinner which binds data to spinner
         spin.adapter = ad
+
+
+        //ALERT DIALOG CUSTOM
         val editText = EditText(this)
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
@@ -99,6 +116,47 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
             edittextDialog.show()
 
         }
+        //Using Picaso
+        val imageView = findViewById<ImageView>(R.id.imageView)
+        Picasso.get().load("https://i.imgur.com/DvpvklR.png").placeholder(R.mipmap.ic_launcher)
+            .error(
+                androidx.core.R.drawable.ic_call_decline_low
+            ).centerCrop()
+            .fit().into(imageView)
+        //placeHolder is used to show image while loading or if it fails to load the real image and error(fallback) isn't provided either
+        //.resize(width,height) can be used to resize the image but it can't be used with fit settings or crops
+        //centerCrop() crops the image from center
+        val digitalClock = findViewById<DigitalClock>(R.id.digitalClock)
+        digitalClock.setOnClickListener {
+            Toast.makeText(applicationContext, "Time is ${digitalClock.text}", Toast.LENGTH_SHORT)
+                .show()
+        }
+        //setting a countDownTimer (Different from pulse timer) using textview
+        val textClock = findViewById<TextView>(R.id.textClock)
+        textClock.setOnClickListener {
+            object : CountDownTimer(50000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val f: DecimalFormat = DecimalFormat("00")
+                    val hour = millisUntilFinished / 3600000 % 24
+                    val min = millisUntilFinished / 60000 % 60
+                    val sec = millisUntilFinished / 1000 % 60
+                    textClock.text = "${f.format(hour)}:${f.format(min)}:${f.format(sec)}"
+                }
+
+                override fun onFinish() {
+                    textClock.text = "00:00:00"
+                }
+            }.start()
+        }
+
+        //now using calender with dialog to set date
+        button2 = findViewById<Button>(R.id.button2)
+        textView = findViewById<TextView>(R.id.textView)
+        button2.setOnClickListener {
+            val datePicker = DatePicker()
+            datePicker.show(fragmentManager, "date picker")
+        }
+
     }
 
     override fun onItemSelected(parent: AdapterView<*>?,
@@ -128,4 +186,17 @@ class MainActivity : ComponentActivity(), AdapterView.OnItemSelectedListener {
         alertdialog.show()
     }
 
+    override fun onDateSet(
+        view: android.widget.DatePicker?,
+        year: Int,
+        month: Int,
+        dayOfMonth: Int
+    ) {
+        val myCalendar = Calendar.getInstance()
+        myCalendar.set(Calendar.YEAR, year)
+        myCalendar.set(Calendar.MONTH, month)
+        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        val string = DateFormat.getDateInstance(DateFormat.FULL).format(myCalendar.time)
+        textView.text = string
+    }
 }

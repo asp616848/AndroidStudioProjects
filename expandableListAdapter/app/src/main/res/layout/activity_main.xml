@@ -7,7 +7,7 @@
     <ExpandableListView
         android:id="@+id/expandableListView"
         android:layout_width="match_parent"
-        android:layout_height="636dp" />
+        android:layout_height="206dp" />
 
     <Spinner
         android:id="@+id/spinner"
@@ -21,4 +21,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Custom Alert Dialog" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="147dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="image des" />
+
+    <AnalogClock
+        android:id="@+id/analogClock"
+        android:layout_width="match_parent"
+        android:layout_height="134dp" />
+
+    <DigitalClock
+        android:id="@+id/digitalClock"
+        android:layout_width="match_parent"
+        android:layout_height="26dp" />
+
+    <TextView
+        android:id="@+id/textClock"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="CLick Here"
+        android:textSize="40dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Calender button" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text=""
+        android:textSize="25sp"/>
 </LinearLayout>
