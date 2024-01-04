@@ -1,10 +1,14 @@
 package com.example.mapsproj
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.mapsproj.databinding.ActivityMapsBinding
@@ -15,7 +19,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.SphericalUtil
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
@@ -26,6 +32,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var Brisbane: LatLng = LatLng(-27.470125, 153.021072)
 
     var locations: ArrayList<LatLng> = ArrayList()
+    var hybrid:Button?=null
+    var satellite:Button?=null
+    var terrain:Button?=null
+
+    var searchView : SearchView?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,17 +52,77 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         locations.add(TamWorth)
         locations.add(NewCastle)
         locations.add(Brisbane)
+
+        //settings buttons for multiple map types
+
+        hybrid = findViewById(R.id.idBtnHybridMap)
+        terrain = findViewById(R.id.idBtnTerrainMap)
+        satellite= findViewById(R.id.idBtnSatelliteMap)
+        hybrid?.setOnClickListener {
+            mMap.mapType=GoogleMap.MAP_TYPE_HYBRID
+        }
+        terrain?.setOnClickListener {
+            mMap.mapType=GoogleMap.MAP_TYPE_TERRAIN
+        }
+        satellite?.setOnClickListener {
+            mMap.mapType=GoogleMap.MAP_TYPE_SATELLITE
+        }
+
+
+        //search view
+
+        searchView = findViewById(R.id.idSearchView)
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                var location: String = query ?: ""
+                var addressList: List<android.location.Address>? = null
+                if (location != null || location != "") {
+                    var geocoder: android.location.Geocoder = android.location.Geocoder(this@MapsActivity)
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 1)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    var address: android.location.Address = addressList!![0]
+                    var latLng: LatLng = LatLng(address.latitude, address.longitude)
+                    mMap.addMarker(MarkerOptions().position(latLng).title(location))
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
     }
+    @SuppressLint("PotentialBehaviorOverride")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         // Add a marker in Sydney and move the camera
 
         for (loc in locations){
-            mMap.addMarker(MarkerOptions().position(loc).title("Marker in ${loc.toString()}").icon(BitmapFromVector(this,R.drawable.baseline_add_location_24)))
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(2.0f))
+            mMap.addMarker(MarkerOptions().position(loc).title("Marker title ${loc.toString()}").icon(BitmapFromVector(this,R.drawable.baseline_add_location_24)))
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(20.0f))
             mMap.moveCamera(CameraUpdateFactory.newLatLng(loc))
         }
+        //polyline
+        mMap.addPolyline(com.google.android.gms.maps.model.PolylineOptions().add(sydney,TamWorth,NewCastle,Brisbane).width(10f).color(R.color.purple_200))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
 
+
+        //click listener
+        mMap.setOnMarkerClickListener (object : GoogleMap.OnMarkerClickListener{
+            override fun onMarkerClick(p0: Marker): Boolean {
+                Toast.makeText(this@MapsActivity,"${p0.title}",Toast.LENGTH_SHORT).show()
+                return false
+            }
+        })
+
+
+        //distance
+        var distance = SphericalUtil.computeDistanceBetween(sydney,TamWorth).toFloat()
+        Toast.makeText(this@MapsActivity,"Distance between Sydney and TamWorth is $distance km",Toast.LENGTH_SHORT).show()
     }
     private fun BitmapFromVector(context: Context, vectorResId:Int): BitmapDescriptor? {
         //drawable generator
