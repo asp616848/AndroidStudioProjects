@@ -21,6 +21,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.firestore
 import com.google.maps.android.SphericalUtil
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -38,11 +45,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var searchView : SearchView?=null
 
+    lateinit var db : FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        //firebase
+        db = FirebaseFirestore.getInstance()
+
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -123,6 +138,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //distance
         var distance = SphericalUtil.computeDistanceBetween(sydney,TamWorth).toFloat()
         Toast.makeText(this@MapsActivity,"Distance between Sydney and TamWorth is $distance km",Toast.LENGTH_SHORT).show()
+
+
+
+        val documentReference : DocumentReference = db.collection("MapsData").document("7QWDor9vozLaHdFYV9kh")
+        documentReference.addSnapshotListener(object : EventListener<DocumentSnapshot> {
+            override fun onEvent(value: DocumentSnapshot?, error: FirebaseFirestoreException?) {
+                if (value != null && value.exists()) {
+
+                    val geopoint = value.getGeoPoint("geoPoint")
+                    var geoLocation = LatLng(geopoint!!.latitude, geopoint!!.longitude)
+                    //above is 2 different methods to get the latlng from firebase
+                    mMap.addMarker(
+                        MarkerOptions().position(geoLocation)
+                            .title("~India~").icon(
+                            BitmapFromVector(
+                                this@MapsActivity,
+                                R.drawable.baseline_add_location_24
+                            )
+                        )
+                    )
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(21.0f))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(geoLocation))
+
+                } else {
+                    Toast.makeText(
+                        this@MapsActivity,
+                        "Error while loading data",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        })
+
     }
     private fun BitmapFromVector(context: Context, vectorResId:Int): BitmapDescriptor? {
         //drawable generator
