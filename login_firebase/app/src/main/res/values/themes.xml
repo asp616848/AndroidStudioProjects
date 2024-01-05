@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--below line is for setting our text color to black-->
+        <item name="android:textColor">@color/black</item>
+        <!--we are setting our primary color to green-->
+        <item name="colorPrimary">@color/purple_500</item>
+        <!--we are setting our primary color dark to green-->
+        <item name="colorPrimaryDark">@color/purple_500</item>
+        <!--we are setting our edittext color to black-->
+        <item name="android:editTextColor">@color/black</item>
+        <!--we are setting our window background color to white-->
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+</resources>
