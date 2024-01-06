@@ -32,8 +32,8 @@ class HomeActivity : AppCompatActivity() {
                 if(it.isSuccessful) {
                     Toast.makeText(this, "Logout Successful", Toast.LENGTH_SHORT).show()
                     val i = Intent(this, MainActivity::class.java)
+                    i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(i)
-                    finish()
                 }
                 else {
                     Toast.makeText(this, "Logout Failed", Toast.LENGTH_SHORT).show()

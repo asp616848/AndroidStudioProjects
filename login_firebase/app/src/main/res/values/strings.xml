@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">login_firebase</string>
     <string name="title_activity_home">HomeActivity</string>
+    <string name="default_web_client_id" translatable="false">webClientId.apps.googleusercontent.com</string>
 </resources>

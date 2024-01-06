@@ -40,12 +40,10 @@ class MainActivity : AppCompatActivity() {
             if (user != null) {
                 val i = Intent(this, HomeActivity::class.java)
                 startActivity(i)
-                finish()
             } else {
                 startActivityForResult(
                     AuthUI.getInstance()
                         .createSignInIntentBuilder()
-                        .setIsSmartLockEnabled(false)
                         .setLogo(R.drawable.baseline_account_box_24)
                         .setAvailableProviders(providers)
                         .build(),
@@ -55,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
     override fun onResume() {
         super.onResume()
         firebaseAuth.addAuthStateListener(authState)
