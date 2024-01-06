@@ -1,16 +1,14 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.googleAndroidLibrariesMapsplatformSecretsGradlePlugin)
-    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.mapsproj"
+    namespace = "com.example.firestore_realtimedb"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.mapsproj"
+        applicationId = "com.example.firestore_realtimedb"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -40,7 +38,6 @@ android {
     }
     buildFeatures {
         compose = true
-        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -53,7 +50,7 @@ android {
 }
 
 dependencies {
-    implementation ("com.google.android.gms:play-services-maps:18.2.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -62,8 +59,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,6 +66,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation ("com.google.maps.android:android-maps-utils:3.8.2")
-    implementation ("com.google.firebase:firebase-firestore:24.10.0")
 }
