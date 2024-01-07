@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "812881183088",
+    "project_id": "firestore-imageslider",
+    "storage_bucket": "firestore-imageslider.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812881183088:android:a67bbcb610f5a51bab0fb5",
+        "android_client_info": {
+          "package_name": "com.example.firestore_imageslider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy58_nxUFDNUB8U0tZuTyvnIPt3K0u9a8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812881183088:android:89e2a03a0a067821ab0fb5",
+        "android_client_info": {
+          "package_name": "com.example.firestore_realtimedb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy58_nxUFDNUB8U0tZuTyvnIPt3K0u9a8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812881183088:android:b7ff75ef7a7ccf2aab0fb5",
+        "android_client_info": {
+          "package_name": "com.example.imageslider_fs_attempt3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy58_nxUFDNUB8U0tZuTyvnIPt3K0u9a8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
