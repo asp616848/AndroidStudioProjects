@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -77,8 +78,7 @@ fun QuotesDetails(){
 
     Box(contentAlignment = Alignment.Center ,
         modifier = Modifier
-            .fillMaxWidth(1f)
-            .padding(16.dp)
+            .fillMaxSize(1f)
             .background(Brush.sweepGradient(listOf(Color.Red, Color.Blue)))) {
 
         Card(
