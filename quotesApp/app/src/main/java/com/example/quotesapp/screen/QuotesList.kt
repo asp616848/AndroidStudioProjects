@@ -1,8 +1,10 @@
 package com.example.quotesapp.screen
 
 import android.widget.Space
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,14 +33,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import models.DataManager
+import models.dataClass
 
 
-@Preview
+
 @Composable
-fun QuotesList() {
+fun QuotesList(quote : dataClass, onClick :(quote: dataClass) -> Unit){
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp) ,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { onClick(quote) }
     ){
         Row(modifier = Modifier.padding(16.dp)) {
             Image( imageVector = Icons.Filled.FormatQuote,
@@ -50,14 +56,14 @@ fun QuotesList() {
             Spacer(modifier = Modifier.size(10.dp))
 
             Column {
-                Text(text = "Quote",
+                Text(text = quote.text ,
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
                             bottom = 8.dp
                         ),
-                    style = MaterialTheme.typography.headlineLarge)
+                    style = MaterialTheme.typography.bodyLarge)
 
                 Box(modifier = Modifier
                     .background(color = Color.Gray)
@@ -65,7 +71,7 @@ fun QuotesList() {
                     .height(2.dp)
                 )
 
-                Text(text = "Author",
+                Text(text = quote.author,
                     modifier = Modifier.fillMaxWidth(),
                     fontWeight = FontWeight.Light,
                     style = MaterialTheme.typography.bodyMedium)
@@ -74,7 +80,11 @@ fun QuotesList() {
     }
 }
 @Composable
-fun QuotesDetails(){
+fun QuotesDetails(Quote : dataClass){
+
+    BackHandler {
+        DataManager.switchPage(Quote)
+    }
 
     Box(contentAlignment = Alignment.Center ,
         modifier = Modifier
@@ -93,7 +103,7 @@ fun QuotesDetails(){
                         .size(60.dp)
                         .rotate(180f))
 
-                Text(text = "Quote",
+                Text(text = Quote.text,
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -115,7 +125,7 @@ fun QuotesDetails(){
                 )
 
 
-                Text(text = "Author",
+                Text(text = Quote.author ,
                     modifier = Modifier.fillMaxWidth(),
                     fontWeight = FontWeight.Light,
                     style = MaterialTheme.typography.bodyMedium)
