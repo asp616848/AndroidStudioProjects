@@ -5,8 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,7 +27,9 @@ import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.example.artworkapp_adaptivelayouts.ui.theme.ArtworkAppadaptivelayoutsTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,21 +45,42 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun displayArtWork() {
+    val windowInfo = rememberWindowInfo()
+
+
     var current by remember { mutableStateOf(0) }
-    val artWork = remember {
+    val artWork = rememberSaveable(stateSaver = ArtWork.ArtWorkSaver) {
         mutableStateOf(artWorkList[current])
     }
+    if(windowInfo.screenWidthInfo is WindowInfo.WindowType.compact) {
+        Column {
 
-    Column {
 
+            artWorkImg(artWork.value.imageId)
+            Spacer(modifier = Modifier.height(106.dp))
 
-        artWorkImg(artWork.value.imageId)
+            cardLayout(artWork.value)
+            switchButtons(current) {
+                current = it
+                artWork.value = artWorkList[current]
+            }
+        }
+    }
+    else{
+        Row{
 
-        cardLayout(artWork.value)
+            artWorkImg(artWork.value.imageId)
 
-        switchButtons(current) {
-            current = it
-            artWork.value = artWorkList[current]
+            Spacer(modifier = Modifier.width(106.dp))
+            Column {
+
+                cardLayout(artWork.value)
+
+                switchButtons(current) {
+                    current = it
+                    artWork.value = artWorkList[current]
+                }
+            }
         }
     }
 }
@@ -63,15 +92,15 @@ fun artWorkImg(imageId: Int, ) {
 
 @Composable
 fun cardLayout(artWork: ArtWork) {
-    Column {
+    Card{Column {
         Text(text = artWork.title, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurface)
         Text(text = artWork.description, style = MaterialTheme.typography.bodyMedium)
-    }
+    }}
 }
 
 @Composable
 fun switchButtons(current: Int, onIndexChanged: (Int) -> Unit) {
-    Column {
+    Row {
         Button(onClick = { onIndexChanged((current - 1 + artWorkList.size) % artWorkList.size) }) {
             Text(text = "Previous")
         }
@@ -86,22 +115,23 @@ class ArtWork(imageId: Int, title: String, description: String) {
     var title: String = title
     var description: String = description
 
-    companion object : Saver<ArtWork, Bundle> {
-        override fun restore(value: Bundle): ArtWork {
+    object ArtWorkSaver : Saver<ArtWork, Map<String, Any>>{
+        override fun restore(value: Map<String, Any>): ArtWork? {
             return ArtWork(
-                value.getInt("imageId"),
-                value.getString("title")!!,
-                value.getString("description")!!
+                imageId = value["imageId"] as Int,
+                title = value["title"] as String,
+                description = value["description"] as String
+            )   
+        }
+
+        override fun SaverScope.save(value: ArtWork): Map<String, Any>? {
+            return mapOf(
+                "imageId" to value.imageId,
+                "title" to value.title,
+                "description" to value.description
             )
         }
 
-        override fun SaverScope.save(value: ArtWork): Bundle {
-            return Bundle().apply {
-                putInt("imageId", value.imageId)
-                putString("title", value.title)
-                putString("description", value.description)
-            }
-        }
     }
 }
 private val artWork1 : ArtWork = ArtWork(imageId = R.drawable.first, title = "First by first artist ", description = "This is first artwork")
@@ -110,3 +140,35 @@ private val artWork3 : ArtWork = ArtWork(imageId = R.drawable.third, title = "Th
 
 val artWorkList : List<ArtWork> = listOf(artWork1, artWork2, artWork3)
 
+
+
+//windows size based edit starts here
+
+@Composable
+fun rememberWindowInfo(): WindowInfo{
+    val configuration = LocalConfiguration.current
+    return WindowInfo(screenHeightInfo = when {
+        configuration.screenHeightDp < 400 -> WindowInfo.WindowType.compact
+        configuration.screenHeightDp < 600 -> WindowInfo.WindowType.medium
+        else -> WindowInfo.WindowType.large
+    }
+        , screenWidthInfo = when {
+            configuration.screenWidthDp < 600-> WindowInfo.WindowType.compact
+            configuration.screenWidthDp < 800 -> WindowInfo.WindowType.medium
+            else -> WindowInfo.WindowType.large
+        }
+        , width = configuration.screenWidthDp
+        ,height = configuration.screenHeightDp
+    )
+}
+
+
+data class WindowInfo(
+    val screenWidthInfo: WindowType, val screenHeightInfo: WindowType,
+    val width: Int, val height: Int){
+    sealed class WindowType{
+        object compact :WindowType()
+        object medium :WindowType()
+        object large :WindowType()
+    }
+}
