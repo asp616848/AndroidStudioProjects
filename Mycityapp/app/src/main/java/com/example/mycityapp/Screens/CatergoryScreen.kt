@@ -26,3 +26,9 @@ fun navigateToCategoryDetail(navController: NavController, index: Int) {
     navController.navigate("category_detail_screen/$index")
 
 }
+
+enum class CatergoryScreen {
+    CatergoryScreen,
+    RecomendationsScreen,
+    DetailsScreen
+}
