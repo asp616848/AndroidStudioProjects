@@ -7,6 +7,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.mycityapp.AppScreen
 import com.example.mycityapp.categories.CategoryClass
 
 @Composable
@@ -15,20 +18,16 @@ fun CatergoryScreen( navController: NavController){
         LazyColumn {
             items(CategoryClass.categories.size) { index ->
                 Text(text = CategoryClass.categories[index], modifier = androidx.compose.ui.Modifier.clickable {
-                    navigateToCategoryDetail(navController, index)
+                    navController.navigate("AppScreen.RecommendationsScreen.name/index") {
+                        navArgument("index") {
+                            type = NavType.IntType
+                        }
+                    }
                 })
             }
         }
     }
 }
 
-fun navigateToCategoryDetail(navController: NavController, index: Int) {
-    navController.navigate("category_detail_screen/$index")
 
-}
 
-enum class CatergoryScreen {
-    CatergoryScreen,
-    RecomendationsScreen,
-    DetailsScreen
-}
