@@ -18,7 +18,7 @@ fun CatergoryScreen( navController: NavController){
         LazyColumn {
             items(CategoryClass.categories.size) { index ->
                 Text(text = CategoryClass.categories[index], modifier = androidx.compose.ui.Modifier.clickable {
-                    navController.navigate("AppScreen.RecommendationsScreen.name/index") {
+                    navController.navigate("AppScreen.RecommendationsScreen.name/$index") {
                         navArgument("index") {
                             type = NavType.IntType
                         }
