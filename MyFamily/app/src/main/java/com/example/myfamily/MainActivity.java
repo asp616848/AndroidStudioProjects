@@ -1,36 +1,41 @@
 package com.example.myfamily;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import com.zegocloud.uikit.prebuilt.call.config.ZegoNotificationConfig;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText editUsername;
+    EditText edtUsername;
     Button btnProceed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        editUsername = findViewById(R.id.edtUsername);
+
+        edtUsername = findViewById(R.id.edtUsername);
         btnProceed = findViewById(R.id.btnProceed);
+
         btnProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String Username = editUsername.getText().toString().trim();
-                if(!Username.isEmpty()){
-                    proceedService(Username);
-                }
-                else{
+                String username = edtUsername.getText().toString().trim();
+                if (!username.isEmpty()){
+                    proceedService(username);
+                    Intent intent = new Intent(MainActivity.this,CallingActivity.class);
+                    intent.putExtra("username",username);
+                    startActivity(intent);
+                }else {
                     return;
                 }
             }
@@ -38,19 +43,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void proceedService(String userID){
-        PermissionX.init(activityContext).permissions(permission.SYSTEM_ALERT_WINDOW)
-                .onExplainRequestReason(new ExplainReasonCallback() {
-                    @Override
-                    public void onExplainReason(@NonNull ExplainScope scope, @NonNull List<String> deniedList) {
-                        String message = "We need your consent for the following permissions in order to use the offline call function properly";
-                        scope.showRequestReasonDialog(deniedList, message, "Allow", "Deny");
-                    }
-                }).request(new RequestCallback() {
-                    @Override
-                    public void onResult(boolean allGranted, @NonNull List<String> grantedList,
-                                         @NonNull List<String> deniedList) {
-                    }
-                });
+        Application application = getApplication();
+        long appID = 1724612326;
+        String appSign = "14d50f9b9d11cc5a943a5c387bf150e1a94efe3cfbdf423e3f2d099ecd172f55";
+        String userName = userID;
 
+        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
+
+        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,callInvitationConfig);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ZegoUIKitPrebuiltCallInvitationService.unInit();
     }
 }
