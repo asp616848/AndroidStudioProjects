@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -40,6 +43,7 @@ import com.google.ai.client.generativeai.type.generationConfig
 import kotlinx.coroutines.MainScope
 import androidx.compose.material3.DropdownMenuItem
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.JdkConstants.VerticalScrollBarPolicy
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +67,7 @@ class MainActivity : ComponentActivity() {
 fun ScreenHome(modifier: Modifier = Modifier) {
     var journalEntry by remember { mutableStateOf("") }
     var userAim by remember { mutableStateOf("") }
-    var responseShow by remember { mutableStateOf("Here") }
+    var responseShow by remember { mutableStateOf("Your Personal Guide Will Write here!") }
 
     Column(modifier = modifier.fillMaxSize()) {
         OutlinedTextField(
@@ -81,7 +85,7 @@ fun ScreenHome(modifier: Modifier = Modifier) {
         )
         if (userAim.isNotEmpty() && journalEntry.isNotEmpty()) {
             Button(onClick = {
-                val formattedInput = "$journalEntry with the aim of $userAim. Generate a image for the same."
+                val formattedInput = "$journalEntry The preceding is my Journal entry from yesterday. The aim of my life right now is to anyhow achieve $userAim. Mentor me regarding the same. Also tell me what i should do tomorrow, to get better"
                 val scope = MainScope() // Or any other appropriate coroutine scope
 
                 scope.launch {
@@ -95,11 +99,16 @@ fun ScreenHome(modifier: Modifier = Modifier) {
                 // Call the API with formattedInput
                 // Update the UI with the response from the API
             }) {
-                Text("Get Guidance")
+                Text(text = "Get Guidance")
             }
         }
-        Text(text = responseShow)
-    }
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())) {
+            Text(
+                text = responseShow, Modifier.fillMaxWidth().offset(x = 16.dp, y = 16.dp))
+            }
+        }
 }
 
 @Preview(showBackground = true)
