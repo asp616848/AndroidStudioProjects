@@ -56,7 +56,7 @@ val model = GenerativeModel(
     "gemini-1.0-pro-001",
     // Retrieve API key as an environmental variable defined in a Build Configuration
     // see https://github.com/google/secrets-gradle-plugin for further instructions
-    "AIzaSyDeh_2cVlwjg3HGhXB0BfxAjdb78ZRE_UQ",
+
     generationConfig = generationConfig {
         temperature = 0.9f
         topK = 1
