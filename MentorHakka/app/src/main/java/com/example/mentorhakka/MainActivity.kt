@@ -55,24 +55,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        val scope = MainScope() // Or any other appropriate coroutine scope
 
-        scope.launch {
-            val chat = model.startChat(chatHistory)
-            val response = chat.sendMessage("YOUR_USER_INPUT")
-            // Get the first text part of the first candidate
-            print(response.text)
-            // Alternatively
-            print(response.candidates.first().content.parts.first().asTextOrNull())
-        }
     }
 }
 
 @Composable
 fun ScreenHome(modifier: Modifier = Modifier) {
     var journalEntry by remember { mutableStateOf("") }
-    var selectedAim by remember { mutableStateOf("") }
-    val aims = listOf("Gym", "Academics", "Coding", "Other")
+    var userAim by remember { mutableStateOf("") }
+    var responseShow by remember { mutableStateOf("Here") }
 
     Column(modifier = modifier.fillMaxSize()) {
         OutlinedTextField(
@@ -82,26 +73,40 @@ fun ScreenHome(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
-        DropdownMenu(
-            expanded = selectedAim.isNotEmpty(),
-            onDismissRequest = { selectedAim = "" },
+        OutlinedTextField(
+            value = userAim,
+            onValueChange = { userAim = it },
+            label = { Text("Aim") },
             modifier = Modifier.fillMaxWidth()
-        ) {
-            aims.forEach { aim ->
-                DropdownMenuItem(onClick = { selectedAim = aim }) {
-                    Text(aim)
-                }
-            }
-        }
-        if (selectedAim.isNotEmpty() && journalEntry.isNotEmpty()) {
+        )
+        if (userAim.isNotEmpty() && journalEntry.isNotEmpty()) {
             Button(onClick = {
-                val formattedInput = "$journalEntry with the aim of $selectedAim"
+                val formattedInput = "$journalEntry with the aim of $userAim. Generate a image for the same."
+                val scope = MainScope() // Or any other appropriate coroutine scope
+
+                scope.launch {
+                    val chat = model.startChat(chatHistory)
+                    val response = chat.sendMessage(formattedInput)
+                    // Get the first text part of the first candidate
+                    responseShow = response.text.toString()
+                    // Alternatively
+                    print(response.candidates.first().content.parts.first().asTextOrNull())
+                }
                 // Call the API with formattedInput
                 // Update the UI with the response from the API
             }) {
                 Text("Get Guidance")
             }
         }
+        Text(text = responseShow)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ScreenHomePreview() {
+    MentorHakkaTheme {
+        ScreenHome()
     }
 }
 
