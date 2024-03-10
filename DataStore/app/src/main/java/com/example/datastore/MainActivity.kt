@@ -17,6 +17,7 @@ import com.example.datastore.ui.theme.DataStoreTheme
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 class MainActivity : ComponentActivity() {
     lateinit var etName: EditText
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun buttonSave() {
         saveButton.setOnClickListener{
             name = etName.text.toString()
