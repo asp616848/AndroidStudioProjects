@@ -1,27 +1,32 @@
 package com.example.refineandexplore.ui.screens
 
-import android.app.Activity
-import android.location.Location
-import androidx.compose.foundation.layout.Arrangement
+import SwipeScreen
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.sharp.Edit
-import androidx.compose.material.icons.sharp.Settings
-import androidx.compose.material.icons.twotone.Build
+import androidx.compose.material.icons.outlined.Call
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.twotone.Edit
+import androidx.compose.material.icons.twotone.Favorite
+import androidx.compose.material.icons.twotone.Notifications
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,22 +35,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.refineandexplore.data.UiState
+import com.example.refineandexplore.ui.ExpandedButton
 import com.example.refineandexplore.viewModel
-import com.example.refineandexplore.data.UserLocation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreen(viewModel: viewModel, modifier: Modifier) {
     val uiState by viewModel.uiState.observeAsState(initial = UiState())
-    var presses by remember { mutableStateOf(0) }
+    val viewModel = viewModel()
     val context = LocalContext.current
-
-
     Scaffold (
         topBar = {
             TopAppBar(
@@ -85,66 +90,101 @@ fun ExploreScreen(viewModel: viewModel, modifier: Modifier) {
 
 
         floatingActionButton = {
-            FloatingActionButton(onClick = { presses++ }) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+            var expanded by rememberSaveable {
+                mutableStateOf(viewModel.uiState.value?.expanded)
+            }
+
+            val transition = updateTransition(targetState = expanded)
+            val rotation by transition.animateFloat(label = "rotation") { state ->
+                if (state == true) 179f else 0f
+            }
+
+            if (expanded == true) {
+                Column {
+                    ExpandedButton(viewModel = viewModel)
+                    Spacer(modifier = Modifier.size(16.dp))
+                    FloatingActionButton(
+                        onClick = { expanded = !expanded!! },
+                        shape = CircleShape,
+                        content = {
+                            Icon(Icons.Rounded.Clear, contentDescription = "Clear")
+                        },
+                        modifier = Modifier
+                            .offset(195.dp)
+                            .rotate(rotation)
+                            .animateContentSize(), // animate size changes
+                        elevation = FloatingActionButtonDefaults.elevation(
+                            defaultElevation = 0.dp
+                        )
+                    )
+                }
+            } else if (expanded == false) {
+                FloatingActionButton(
+                    onClick = {expanded = !expanded!!},
+                    shape = CircleShape,
+                    content = {
+                        Icon(Icons.Rounded.Add, contentDescription = "Add")
+                    },
+                    modifier = Modifier
+                        .animateContentSize()
+                        .rotate(rotation), // animate size changes
+                    elevation = FloatingActionButtonDefaults.elevation(
+                        defaultElevation = 0.dp
+                    )
+                )
             }
         },
 
-        
         bottomBar = {
             BottomAppBar {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Default.List, contentDescription = "List")
-                }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Sharp.Settings, contentDescription = "Settings")
+                Row{
+                    Spacer(modifier = Modifier.size(2.dp))
+                    BottomElement(text = "Explore", icon = Icons.Outlined.Search)
+                    Spacer(modifier = Modifier.size(18.dp))
+                    BottomElement(text = "Connections", icon = Icons.Outlined.Person)
+                    Spacer(modifier = Modifier.size(18.dp))
+                    BottomElement(text = "Chat", icon = Icons.Outlined.Email)
+                    Spacer(modifier = Modifier.size(18.dp))
+                    BottomElement(text = "Contacts", icon = Icons.Outlined.Call)
+                    Spacer(modifier = Modifier.size(18.dp))
+                    BottomElement(text = "Groups", icon = Icons.TwoTone.Notifications)
                 }
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text =
-                """
-                    This is an example of a scaffold. It uses the Scaffold composable's parameters to create a screen with a simple top app bar, bottom app bar, and floating action button.
-
-                    It also contains some basic inner content, such as this text.
-
-                    You have pressed the floating action button $presses times.
-                """.trimIndent(),
-            )
-        }
+            SwipeScreen(innerPadding)
     }
 }
 
+
 @Composable
-fun title(uiState: UiState) {
-    Row {
-        Spacer(modifier = Modifier.size(16.dp))
-        Column {
-            Text(
-                text = uiState.userName, // Display the username from uiState
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Row {
-                Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = "Location",
-                    Modifier
-                        .size(17.dp)
-                        .padding(start = 4.dp)
-                )
+fun title(uiState: UiState?) {
+    if (uiState != null) {
+        Row {
+            Spacer(modifier = Modifier.size(16.dp))
+            Column {
                 Text(
-                    text = uiState.address, // Display the location
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = uiState.userName, // Display the username from uiState
+                    style = MaterialTheme.typography.titleLarge,
                 )
+                Row {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        Modifier
+                            .size(17.dp)
+                            .padding(start = 4.dp)
+                    )
+                    Text(
+                        text = uiState.address, // Display the location
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
         }
+    } else {
+        // Handle the null case if needed, e.g., show placeholder text
+        Text(text = "Loading...", modifier = Modifier.padding(8.dp))
     }
 }
 
