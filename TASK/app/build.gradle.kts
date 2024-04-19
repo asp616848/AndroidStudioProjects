@@ -69,5 +69,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.5")
     implementation ("com.google.android.gms:play-services-location:21.2.0")
+    implementation ("com.google.accompanist:accompanist-pager:0.19.0")
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation ("androidx.navigation:navigation-compose:2.7.7")
+
 }

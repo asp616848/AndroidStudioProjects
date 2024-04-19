@@ -1,15 +1,25 @@
 package com.example.refineandexplore.ui.screens
 
 import SwipeScreen
+import android.widget.LinearLayout
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
@@ -21,9 +31,9 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.twotone.Edit
-import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Notifications
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -33,24 +43,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavHostController
 import com.example.refineandexplore.data.UiState
 import com.example.refineandexplore.ui.ExpandedButton
 import com.example.refineandexplore.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreScreen(viewModel: viewModel, modifier: Modifier) {
+fun ExploreScreen(viewModel: viewModel, modifier: Modifier, navController: NavHostController) {
     val uiState by viewModel.uiState.observeAsState(initial = UiState())
     val viewModel = viewModel()
     val context = LocalContext.current
+
+    // Variable to track the expanded state of the FAB
+    var expanded by rememberSaveable { mutableStateOf(viewModel.uiState.value?.expanded) }
+
+    // Transition for animating the rotation of the FAB
+    val transition = updateTransition(targetState = expanded)
+    val rotation by transition.animateFloat(label = "rotation") { state ->
+        if (state == true) 179f else 0f
+    }
     Scaffold (
         topBar = {
             TopAppBar(
@@ -69,7 +93,7 @@ fun ExploreScreen(viewModel: viewModel, modifier: Modifier) {
                         modifier = Modifier.padding(8.dp)
 
                     ) {
-                        IconButton(onClick = { /*TODO*/ }){
+                        IconButton(onClick = { navController.navigate("refine_screen") }){
                             Icon(
                                 imageVector = Icons.TwoTone.Edit,
                                 contentDescription = "Refine",
@@ -99,25 +123,54 @@ fun ExploreScreen(viewModel: viewModel, modifier: Modifier) {
                 if (state == true) 179f else 0f
             }
 
-            if (expanded == true) {
-                Column {
-                    ExpandedButton(viewModel = viewModel)
-                    Spacer(modifier = Modifier.size(16.dp))
-                    FloatingActionButton(
-                        onClick = { expanded = !expanded!! },
-                        shape = CircleShape,
-                        content = {
-                            Icon(Icons.Rounded.Clear, contentDescription = "Clear")
-                        },
+            if (expanded == true || expanded == null) {
+                ConstraintLayout(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    val (box, column) = createRefs()
+
+                    Box(
                         modifier = Modifier
-                            .offset(195.dp)
-                            .rotate(rotation)
-                            .animateContentSize(), // animate size changes
-                        elevation = FloatingActionButtonDefaults.elevation(
-                            defaultElevation = 0.dp
-                        )
+                            .fillMaxSize()
+                            .constrainAs(box) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                            }
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f))
+                            .clickable { expanded = !expanded!! }
                     )
+
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .constrainAs(column) {
+                                bottom.linkTo(parent.bottom)
+                                end.linkTo(parent.end)
+                            }
+                    ) {
+                        ExpandedButton(viewModel = viewModel)
+                        Spacer(modifier = Modifier.height(30.dp))
+                        Row{
+                            Text(text = "                                            ")
+                            FloatingActionButton(
+                                onClick = { expanded = !expanded!! },
+                                shape = CircleShape,
+                                content = {
+                                    Icon(Icons.Rounded.Clear, contentDescription = "Clear")
+                                },
+                                modifier = Modifier
+                                    .rotate(rotation)
+                                    .animateContentSize(), // animate size changes
+                                elevation = FloatingActionButtonDefaults.elevation(
+                                    defaultElevation = 0.dp
+                                )
+                            )
+                        }
+                    }
                 }
+
+
             } else if (expanded == false) {
                 FloatingActionButton(
                     onClick = {expanded = !expanded!!},
@@ -137,22 +190,21 @@ fun ExploreScreen(viewModel: viewModel, modifier: Modifier) {
 
         bottomBar = {
             BottomAppBar {
-                Row{
-                    Spacer(modifier = Modifier.size(2.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
                     BottomElement(text = "Explore", icon = Icons.Outlined.Search)
-                    Spacer(modifier = Modifier.size(18.dp))
                     BottomElement(text = "Connections", icon = Icons.Outlined.Person)
-                    Spacer(modifier = Modifier.size(18.dp))
                     BottomElement(text = "Chat", icon = Icons.Outlined.Email)
-                    Spacer(modifier = Modifier.size(18.dp))
                     BottomElement(text = "Contacts", icon = Icons.Outlined.Call)
-                    Spacer(modifier = Modifier.size(18.dp))
                     BottomElement(text = "Groups", icon = Icons.TwoTone.Notifications)
                 }
             }
         }
+
     ) { innerPadding ->
-            SwipeScreen(innerPadding)
+            SwipeScreen(viewModel, innerPadding)
     }
 }
 
@@ -191,5 +243,5 @@ fun title(uiState: UiState?) {
 @Preview
 @Composable
 fun ExploreScreenPreview() {
-    ExploreScreen(viewModel = viewModel(), modifier = Modifier)
+    ExploreScreen(viewModel(), Modifier, navController = NavHostController(LocalContext.current))
 }

@@ -10,7 +10,10 @@ class viewModel : ViewModel(){
 
     private val _uiState = MutableLiveData<UiState>(UiState())
     val uiState: LiveData<UiState> = _uiState
-    fun flipExpandedState() {
-        _uiState.value?.expanded = !(_uiState.value?.expanded ?: false)
+
+    fun updatePage(page: Int){
+        _uiState.value = _uiState.value?.copy(currentPage = page)
     }
+
+
 }
