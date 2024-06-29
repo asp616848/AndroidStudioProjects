@@ -1,7 +1,7 @@
 package com.example.mapsproj
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.Contextid
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
