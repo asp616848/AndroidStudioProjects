@@ -110,6 +110,7 @@ fun switchButtons(current: Int, onIndexChanged: (Int) -> Unit) {
     }
 }
 
+
 class ArtWork(imageId: Int, title: String, description: String) {
     var imageId: Int = imageId
     var title: String = title
@@ -123,7 +124,7 @@ class ArtWork(imageId: Int, title: String, description: String) {
                 description = value["description"] as String
             )   
         }
-
+x
         override fun SaverScope.save(value: ArtWork): Map<String, Any>? {
             return mapOf(
                 "imageId" to value.imageId,
