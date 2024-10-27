@@ -112,12 +112,12 @@ fun TopicCardLay(topic: Topic, modifier: Modifier = Modifier) {
         }
     }
 }
+
 class Topic(private val string:Int, private val serial :Int, private val drawable : Int){
     @StringRes val stringRes = string
     @DrawableRes val drawableRes = drawable
     val serialNo = serial
 }
-
 
 object DataSource {
     val topics = listOf(
